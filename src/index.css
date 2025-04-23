@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+/* In your CSS (global or scoped) */
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}

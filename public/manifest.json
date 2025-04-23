@@ -18,7 +18,7 @@
       "js": ["content/content.js"]
     }
   ],
-  "permissions": ["activeTab", "scripting", "bookmarks"],
+  "permissions": ["nativeMessaging", "scripting", "bookmarks"],
   "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
