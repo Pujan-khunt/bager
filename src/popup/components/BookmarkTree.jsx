@@ -1,20 +1,21 @@
 import { useState, useEffect } from "react";
+import { sendMessage } from "../utils/chromeAPI";
 
 function BookmarkTree() {
   const [bookmarks, setBookmarks] = useState([]);
 
   // Fetch bookmarks from Chrome API
   useEffect(() => {
-    const message = {
-      type: "GET_BOOKMARK_TREE"
-    }
+    async function communicate() {
+      const response = await sendMessage({ type: "GET_BOOKMARK_TREE" });
 
-    chrome.runtime.sendMessage(message, (response) => {
       if (response?.bookmarks) {
         setBookmarks(response.bookmarks[0]);
         console.log("Response recieved from background.js:", response.bookmarks[0])
       }
-    });
+    }
+
+    communicate()
   }, []);
 
   return (
@@ -36,7 +37,7 @@ function BookmarkNode({ bookmark }) {
   }
 
   const openLink = (url) => {
-    chrome.runtime.sendMessage({
+    sendMessage({
       type: "CREATE_TAB",
       url
     });
@@ -63,7 +64,7 @@ function BookmarkNode({ bookmark }) {
               {bookmark.title}
             </div>
           ) : (
-            < span className="font-medium text-gray-800 text-sm">{bookmark.title}</span>
+            < span className="font-semibold text-[var(--bager-gold)] text-sm">{bookmark.title}</span>
           )
         }
       </div>
@@ -71,7 +72,7 @@ function BookmarkNode({ bookmark }) {
       {/* Recursively render the children */}
       {
         hasChildren && isOpen && (
-          <ul className="pl-4 border-l border-gray-200 hover:text-gray-800 mt-1 space-y-1">
+          <ul className={`pl-4 border-l border-gray-200 mt-1 space-y-1`}>
             {bookmark.children.map((child) => (
               <BookmarkNode key={child.id} bookmark={child} />
             ))}
