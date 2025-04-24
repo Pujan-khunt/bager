@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Bager",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A simple and elegant bookmark manager for your browser.",
   "action": {
     "default_popup": "popup.html",

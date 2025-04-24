@@ -18,4 +18,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       url: request.url
     })
   }
+  else if (request.type === "GET_VERSION") {
+    const manifest = chrome.runtime.getManifest();
+    console.log(manifest)
+    sendResponse({ version: manifest.version });
+  }
 });
