@@ -1,6 +1,7 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log("Sender:", sender);
+
   if (request.type === "GET_BOOKMARK_TREE") {
-    console.log("Sender:", sender);
 
     chrome.bookmarks.getTree((bookmarkTree) => {
       sendResponse({ bookmarks: bookmarkTree });
@@ -11,5 +12,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // Which will tell the Chrome to not garbage collect this callback function 
     // So it will not fail to send this message to the sender.
     return true;
+  }
+  else if (request.type === 'CREATE_TAB') {
+    chrome.tabs.create({
+      url: request.url
+    })
   }
 });

@@ -18,7 +18,7 @@ function BookmarkTree() {
   }, []);
 
   return (
-    <ul className="">
+    <ul>
       {Array.isArray(bookmarks?.children) && bookmarks.children.map((bookmark) => (
         <BookmarkNode key={bookmark.id} bookmark={bookmark} />
       ))}
@@ -27,59 +27,59 @@ function BookmarkTree() {
 }
 
 function BookmarkNode({ bookmark }) {
+  const [isOpen, setIsOpen] = useState(false);
   const isFolder = !bookmark.url;
   const hasChildren = Array.isArray(bookmark.children) && bookmark.children.length > 0;
 
+  const toggleFolder = () => {
+    setIsOpen(folderState => !folderState);
+  }
+
+  const openLink = (url) => {
+    chrome.runtime.sendMessage({
+      type: "CREATE_TAB",
+      url
+    });
+  }
+
   return (
-    <li className="ml-2 mt-1">
-      <div className="flex items-center gap-2 hover:bg-gray-100 rounded px-1 py-0.5 cursor-pointer">
-        <span className="text-gray-600">
-          {isFolder ? "📁" : "🔗"}
+    // Render the bookmark whether a folder or a link
+    <li className="mx-2 my-1">
+      {/* Render a single folder/link */}
+      <div onClick={toggleFolder} className="flex items-center gap-2 hover:bg-gray-100 rounded px-1 py-0.5 cursor-pointer">
+        <span>
+          {
+            isFolder ? (isOpen ? "📂" : "📁") : "🔗"
+          }
         </span>
-        {bookmark.url ? (
-          <a
-            href={bookmark.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline text-sm"
-          >
-            {bookmark.title || bookmark.url}
-          </a>
-        ) : (
-          <span className="font-medium text-gray-800 text-sm">{bookmark.title}</span>
-        )}
+
+        {
+          !isFolder ? (
+            <div
+              onClick={() => openLink(bookmark.url)}
+              rel="noopener noreferrer"
+              className="text-white hover:underline text-sm"
+            >
+              {bookmark.title}
+            </div>
+          ) : (
+            < span className="font-medium text-gray-800 text-sm">{bookmark.title}</span>
+          )
+        }
       </div>
 
-      {hasChildren && (
-        <ul className="pl-4 border-l border-gray-200 mt-1 space-y-1">
-          {bookmark.children.map((child) => (
-            <BookmarkNode key={child.id} bookmark={child} />
-          ))}
-        </ul>
-      )}
-    </li>
+      {/* Recursively render the children */}
+      {
+        hasChildren && isOpen && (
+          <ul className="pl-4 border-l border-gray-200 hover:text-gray-800 mt-1 space-y-1">
+            {bookmark.children.map((child) => (
+              <BookmarkNode key={child.id} bookmark={child} />
+            ))}
+          </ul>
+        )
+      }
+    </li >
   );
 }
-
-// function BookmarkNode({ bookmark }) {
-//   return (
-//     <li>
-//       {bookmark.url ? (
-//         <a href={bookmark.url} target="_blank" rel="noopener noreferrer">
-//           {bookmark.title}
-//         </a>
-//       ) : (
-//         <span>{bookmark.title}</span>
-//       )}
-//       {bookmark.children && (
-//         <ul>
-//           {Array.isArray(bookmark?.children) && bookmark.children.length > 0 && bookmark.children.map((child) => (
-//             <BookmarkNode key={child.id} bookmark={child} />
-//           ))}
-//         </ul>
-//       )}
-//     </li>
-//   );
-// }
 
 export default BookmarkTree;
