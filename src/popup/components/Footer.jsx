@@ -1,14 +1,7 @@
-import { useState } from "react";
+import { useVersion } from "../hooks/useVersion";
 
 function Footer() {
-  const [version, setVersion] = useState(() => {
-    async function fetchVersion() {
-      const response = await chrome.runtime.sendMessage({ type: "GET_VERSION" })
-      setVersion(response.version)
-    };
-
-    fetchVersion();
-  });
+  const version = useVersion();
 
   return (
     <footer className="bg-teal-400 px-4 py-1 mt-auto">
